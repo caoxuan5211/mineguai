@@ -344,7 +344,7 @@
       <button class="main-btn" id="undoBtn">撤销一步</button>
       <button class="main-btn" id="undoSelectedBtn">撤销所选</button>
       <button class="main-btn primary" id="resetBtn">新一局清零</button>
-      <div class="hint">红色: 我输给该玩家 | 绿色: 我赢该玩家</div>
+      <div class="hint">红色: 我输该玩家 | 绿色: 我赢该玩家</div>
       <div class="step-hint" id="stepHint">当前步长：1</div>
     </section>
 
@@ -533,7 +533,7 @@
         if (item.iWin) {
           btn.textContent = `我赢${playerNames[item.opponent]} ${formatPositiveMoney(item.amount)} 块`;
         } else {
-          btn.textContent = `我输给${playerNames[item.opponent]} ${formatPositiveMoney(item.amount)} 块`;
+          btn.textContent = `我给${playerNames[item.opponent]} ${formatPositiveMoney(item.amount)} 块`;
         }
         btn.addEventListener("click", () => {
           selectedHistoryIndex = selectedHistoryIndex === index ? null : index;
