@@ -180,20 +180,27 @@
     button {
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.94);
-      border-radius: 10px;
+      border-radius: 0;
+      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
       padding: 10px 6px;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease, border-color 0.12s ease;
     }
 
     button:hover {
       transform: translateY(-1px);
       box-shadow: 0 8px 16px rgba(18, 57, 33, 0.14);
+      border-color: #7ea98b;
     }
 
     button:active {
       transform: translateY(0);
+    }
+
+    button:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(63, 143, 95, 0.24);
     }
 
     .loss {
@@ -223,10 +230,11 @@
     }
 
     .main-btn {
-      border-radius: 10px;
+      border-radius: 0;
       padding: 10px 14px;
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.94);
+      clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
     }
 
     .primary {
@@ -275,7 +283,8 @@
       background: rgba(255, 255, 255, 0.9);
       color: inherit;
       padding: 10px 12px;
-      border-radius: 10px;
+      border-radius: 0;
+      clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
       font-weight: 600;
     }
 
