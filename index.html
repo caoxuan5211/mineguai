@@ -7,17 +7,17 @@
   <link rel="icon" href="icon.png" type="image/png">
   <style>
     :root {
-      --bg: #f4efe7;
-      --card: #fffaf2;
-      --line: #dbcdb8;
-      --text: #2e2418;
-      --muted: #7a6a58;
-      --gain: #1c7b4d;
-      --loss: #b23a2a;
-      --accent: #d08c2f;
-      --shadow: 0 12px 24px rgba(53, 37, 15, 0.12);
+      --bg: #e8f0ea;
+      --card: rgba(246, 252, 248, 0.9);
+      --line: #b8cbbd;
+      --text: #1f2f24;
+      --muted: #5f7566;
+      --gain: #1f7a4e;
+      --loss: #8e3a2f;
+      --accent: #3f8f5f;
+      --shadow: 0 14px 28px rgba(12, 45, 24, 0.18);
       --ground-image: url("windows_background.png");
-      --ground-overlay: rgba(18, 11, 4, 0.4);
+      --ground-overlay: rgba(16, 42, 27, 0.42);
     }
 
     * { box-sizing: border-box; }
@@ -40,11 +40,11 @@
     .app {
       max-width: 980px;
       margin: 0 auto;
-      background: rgba(255, 250, 242, 0.9);
+      background: rgba(244, 251, 246, 0.88);
       border: 1px solid var(--line);
       border-radius: 20px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(6px);
       overflow: hidden;
     }
 
@@ -97,14 +97,14 @@
       border-radius: 10px;
       padding: 10px 12px;
       font: inherit;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.92);
       color: var(--text);
       outline: none;
     }
 
     .namebox input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(208, 140, 47, 0.12);
+      box-shadow: 0 0 0 3px rgba(63, 143, 95, 0.18);
     }
 
     .stepbox {
@@ -124,14 +124,14 @@
       border-radius: 10px;
       padding: 10px 12px;
       font: inherit;
-      background: #fff;
+      background: rgba(255, 255, 255, 0.92);
       color: var(--text);
       outline: none;
     }
 
     .stepbox input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(208, 140, 47, 0.12);
+      box-shadow: 0 0 0 3px rgba(63, 143, 95, 0.18);
     }
 
     .stat {
@@ -179,7 +179,7 @@
 
     button {
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(255, 255, 255, 0.94);
       border-radius: 10px;
       padding: 10px 6px;
       font-weight: 700;
@@ -189,7 +189,7 @@
 
     button:hover {
       transform: translateY(-1px);
-      box-shadow: 0 8px 14px rgba(79, 57, 26, 0.12);
+      box-shadow: 0 8px 16px rgba(18, 57, 33, 0.14);
     }
 
     button:active {
@@ -198,14 +198,14 @@
 
     .loss {
       color: var(--loss);
-      background: #fff4f2;
-      border-color: #e8c1ba;
+      background: #fff2f0;
+      border-color: #ddb6b0;
     }
 
     .gain {
       color: var(--gain);
-      background: #f1fff7;
-      border-color: #b9dec8;
+      background: #f0fbf3;
+      border-color: #a9cfb6;
     }
 
     .panel-foot {
@@ -226,13 +226,13 @@
       border-radius: 10px;
       padding: 10px 14px;
       border: 1px solid var(--line);
-      background: #fff;
+      background: rgba(255, 255, 255, 0.94);
     }
 
     .primary {
-      background: linear-gradient(120deg, #f6d18d, var(--accent));
-      border-color: #b77824;
-      color: #3b250e;
+      background: linear-gradient(120deg, #a9d8b8, #4f9a6b);
+      border-color: #3c7f57;
+      color: #133222;
     }
 
     .hint {
@@ -249,7 +249,7 @@
     .history {
       border-top: 1px solid var(--line);
       padding: 12px 14px 14px;
-      background: rgba(253, 247, 236, 0.7);
+      background: rgba(239, 248, 241, 0.76);
     }
 
     .history h3 {
@@ -272,7 +272,7 @@
       width: 100%;
       text-align: left;
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.9);
       color: inherit;
       padding: 10px 12px;
       border-radius: 10px;
@@ -281,15 +281,15 @@
 
     .history-item.selected {
       border-color: var(--accent);
-      background: #fff2d6;
+      background: #eaf6ee;
       color: var(--text);
-      box-shadow: 0 0 0 2px rgba(208, 140, 47, 0.12) inset;
+      box-shadow: 0 0 0 2px rgba(63, 143, 95, 0.14) inset;
     }
 
     @media (max-width: 860px) {
       :root {
         --ground-image: url("andriod_background.png");
-        --ground-overlay: rgba(22, 14, 7, 0.48);
+        --ground-overlay: rgba(14, 40, 25, 0.5);
       }
 
       body {
@@ -307,7 +307,7 @@
 <body>
   <main class="app">
     <section class="top">
-      <h1 class="title">四人麻将输赢计数器</h1>
+      <h1 class="title">曹家麻将记账板</h1>
       <div class="stepbar">
         <div class="stepbox">
           <label for="stepValue">步长</label>
@@ -581,7 +581,7 @@
 
         const foot = document.createElement("div");
         foot.className = "panel-foot";
-        foot.textContent = `当前对${playerNames[p]}净额: ${formatMoney(-balances[p])}（正数表示我赢）`;
+        foot.textContent = `当前对${playerNames[p]}盈亏: ${formatMoney(-balances[p])}`;
 
         panel.append(title, lossRow, gainRow, foot);
         board.appendChild(panel);
