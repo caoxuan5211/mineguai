@@ -331,7 +331,7 @@
         <button class="main-btn primary" id="saveNamesBtn">确定名字</button>
       </div>
       <div class="summary">
-        <div class="stat"><small id="meLabel">我（0号）</small><div class="value" id="meValue">0</div></div>
+        <div class="stat"><small id="meLabel">我</small><div class="value" id="meValue">0</div></div>
         <div class="stat"><small id="p1Label">1号</small><div class="value" id="p1Value">0</div></div>
         <div class="stat"><small id="p2Label">2号</small><div class="value" id="p2Value">0</div></div>
         <div class="stat"><small id="p3Label">3号</small><div class="value" id="p3Value">0</div></div>
@@ -355,12 +355,12 @@
   </main>
 
   <script>
-    const players = ["我（0号）", "1号", "2号", "3号"];
+    const players = ["我", "1号", "2号", "3号"];
     const others = [1, 2, 3];
     const balances = [0, 0, 0, 0];
     const history = [];
     let selectedHistoryIndex = null;
-    const playerNames = ["我（0号）", "1号", "2号", "3号"];
+    const playerNames = ["我", "1号", "2号", "3号"];
     let stepValue = 1;
 
     const board = document.getElementById("board");
