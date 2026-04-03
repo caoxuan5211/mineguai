@@ -325,7 +325,7 @@
       <div class="stepbar">
         <div class="stepbox">
           <label for="stepValue">步长</label>
-          <input id="stepValue" type="number" min="0.01" step="0.5" value="1">
+          <input id="stepValue" type="number" min="0.5" step="0.5" value="1">
         </div>
         <button class="main-btn primary" id="saveStepBtn">确定步长</button>
       </div>
@@ -376,6 +376,7 @@
     let selectedHistoryIndex = null;
     const playerNames = ["我", "1号", "2号", "3号"];
     let stepValue = 1;
+    const STEP_INCREMENT = 0.5;
 
     const board = document.getElementById("board");
     const historyEl = document.getElementById("history");
@@ -383,11 +384,18 @@
     const labelEls = [null, document.getElementById("p1Label"), document.getElementById("p2Label"), document.getElementById("p3Label")];
     const stepInput = document.getElementById("stepValue");
     const stepHint = document.getElementById("stepHint");
+    stepInput.min = String(STEP_INCREMENT);
+    stepInput.step = String(STEP_INCREMENT);
 
     const multipliers = [1, 2, 3, 5, 10];
 
     function normalizeMoney(value) {
       return Math.round(value * 100) / 100;
+    }
+
+    function normalizeStep(value) {
+      const snapped = Math.round(value / STEP_INCREMENT) * STEP_INCREMENT;
+      return Math.max(STEP_INCREMENT, normalizeMoney(snapped));
     }
 
     function formatMoney(value) {
@@ -443,7 +451,7 @@
       try {
         const saved = Number(localStorage.getItem("mahjong-step-value"));
         if (Number.isFinite(saved) && saved > 0) {
-          stepValue = normalizeMoney(saved);
+          stepValue = normalizeStep(saved);
           stepInput.value = String(stepValue);
         }
       } catch {
@@ -458,7 +466,7 @@
         return;
       }
 
-      stepValue = normalizeMoney(nextValue);
+      stepValue = normalizeStep(nextValue);
       stepInput.value = String(stepValue);
 
       try {
