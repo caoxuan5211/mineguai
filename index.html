@@ -40,9 +40,9 @@
     .app {
       max-width: 980px;
       margin: 0 auto;
-      background: rgba(244, 251, 246, 0.88);
+      background: rgba(244, 251, 246, 0.9);
       border: 1px solid var(--line);
-      border-radius: 20px;
+      border-radius: 18px;
       box-shadow: var(--shadow);
       backdrop-filter: blur(6px);
       overflow: hidden;
@@ -94,7 +94,8 @@
     .namebox input {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 0;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
       padding: 10px 12px;
       font: inherit;
       background: rgba(255, 255, 255, 0.92);
@@ -121,7 +122,8 @@
     .stepbox input {
       width: 100%;
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 0;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
       padding: 10px 12px;
       font: inherit;
       background: rgba(255, 255, 255, 0.92);
@@ -137,7 +139,8 @@
     .stat {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: 0;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
       padding: 10px;
     }
 
@@ -160,7 +163,8 @@
     .panel {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 14px;
+      border-radius: 0;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
       padding: 12px;
       display: grid;
       gap: 10px;
@@ -258,6 +262,7 @@
       border-top: 1px solid var(--line);
       padding: 12px 14px 14px;
       background: rgba(239, 248, 241, 0.76);
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
     }
 
     .history h3 {
