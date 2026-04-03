@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>麻将四人计分器</title>
+  <title>曹家麻将计帐板</title>
+  <link rel="icon" href="icon.png" type="image/png">
   <style>
     :root {
       --bg: #f4efe7;
@@ -15,6 +16,8 @@
       --loss: #b23a2a;
       --accent: #d08c2f;
       --shadow: 0 12px 24px rgba(53, 37, 15, 0.12);
+      --ground-image: url("windows_background.png");
+      --ground-overlay: rgba(18, 11, 4, 0.4);
     }
 
     * { box-sizing: border-box; }
@@ -23,10 +26,13 @@
       margin: 0;
       font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at 10% 10%, #fff8e8 0, transparent 42%),
-        radial-gradient(circle at 90% 5%, #f5e3c8 0, transparent 35%),
-        linear-gradient(170deg, #efe5d5, var(--bg));
+      background-image:
+        linear-gradient(var(--ground-overlay), var(--ground-overlay)),
+        var(--ground-image);
+      background-size: cover, cover;
+      background-position: center, center;
+      background-repeat: no-repeat, no-repeat;
+      background-attachment: fixed, fixed;
       min-height: 100vh;
       padding: 18px;
     }
@@ -34,7 +40,7 @@
     .app {
       max-width: 980px;
       margin: 0 auto;
-      background: rgba(255, 250, 242, 0.84);
+      background: rgba(255, 250, 242, 0.9);
       border: 1px solid var(--line);
       border-radius: 20px;
       box-shadow: var(--shadow);
@@ -68,6 +74,13 @@
       align-items: end;
     }
 
+    .stepbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
     .namebox {
       display: grid;
       gap: 6px;
@@ -90,6 +103,33 @@
     }
 
     .namebox input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(208, 140, 47, 0.12);
+    }
+
+    .stepbox {
+      display: grid;
+      gap: 6px;
+      max-width: 220px;
+    }
+
+    .stepbox label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stepbox input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    .stepbox input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(208, 140, 47, 0.12);
     }
@@ -201,6 +241,11 @@
       font-size: 13px;
     }
 
+    .step-hint {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     .history {
       border-top: 1px solid var(--line);
       padding: 12px 14px 14px;
@@ -242,8 +287,18 @@
     }
 
     @media (max-width: 860px) {
+      :root {
+        --ground-image: url("andriod_background.png");
+        --ground-overlay: rgba(22, 14, 7, 0.48);
+      }
+
+      body {
+        background-attachment: scroll, scroll;
+      }
+
       .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .namebar { grid-template-columns: 1fr; }
+      .stepbar { grid-template-columns: 1fr; }
       .board { grid-template-columns: 1fr; }
       .hint { width: 100%; margin-left: 0; }
     }
@@ -253,6 +308,13 @@
   <main class="app">
     <section class="top">
       <h1 class="title">四人麻将输赢计数器</h1>
+      <div class="stepbar">
+        <div class="stepbox">
+          <label for="stepValue">步长</label>
+          <input id="stepValue" type="number" min="0.01" step="0.01" value="1">
+        </div>
+        <button class="main-btn primary" id="saveStepBtn">确定步长</button>
+      </div>
       <div class="namebar">
         <div class="namebox">
           <label for="name1">1号名字</label>
@@ -283,6 +345,7 @@
       <button class="main-btn" id="undoSelectedBtn">撤销所选</button>
       <button class="main-btn primary" id="resetBtn">新一局清零</button>
       <div class="hint">红色: 我输给该玩家 | 绿色: 我赢该玩家</div>
+      <div class="step-hint" id="stepHint">当前步长：1</div>
     </section>
 
     <section class="history">
@@ -294,16 +357,38 @@
   <script>
     const players = ["我（0号）", "1号", "2号", "3号"];
     const others = [1, 2, 3];
-    const amounts = [1, 2, 3, 5, 10];
     const balances = [0, 0, 0, 0];
     const history = [];
     let selectedHistoryIndex = null;
     const playerNames = ["我（0号）", "1号", "2号", "3号"];
+    let stepValue = 1;
 
     const board = document.getElementById("board");
     const historyEl = document.getElementById("history");
     const nameInputs = [document.getElementById("name1"), document.getElementById("name2"), document.getElementById("name3")];
     const labelEls = [null, document.getElementById("p1Label"), document.getElementById("p2Label"), document.getElementById("p3Label")];
+    const stepInput = document.getElementById("stepValue");
+    const stepHint = document.getElementById("stepHint");
+
+    const multipliers = [1, 2, 3, 5, 10];
+
+    function normalizeMoney(value) {
+      return Math.round(value * 100) / 100;
+    }
+
+    function formatMoney(value) {
+      const rounded = normalizeMoney(value);
+      const text = rounded.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
+      return rounded > 0 ? `+${text}` : text;
+    }
+
+    function formatPositiveMoney(value) {
+      return formatMoney(value).replace(/^\+/, "");
+    }
+
+    function getAmounts() {
+      return multipliers.map((multiplier) => normalizeMoney(multiplier * stepValue));
+    }
 
     function loadNames() {
       try {
@@ -340,19 +425,45 @@
       render();
     }
 
-    function format(n) {
-      if (n > 0) return `+${n}`;
-      return `${n}`;
+    function loadStep() {
+      try {
+        const saved = Number(localStorage.getItem("mahjong-step-value"));
+        if (Number.isFinite(saved) && saved > 0) {
+          stepValue = normalizeMoney(saved);
+          stepInput.value = String(stepValue);
+        }
+      } catch {
+        // 忽略本地存储异常
+      }
+    }
+
+    function saveStep() {
+      const nextValue = Number(stepInput.value);
+      if (!Number.isFinite(nextValue) || nextValue <= 0) {
+        stepInput.value = String(stepValue);
+        return;
+      }
+
+      stepValue = normalizeMoney(nextValue);
+      stepInput.value = String(stepValue);
+
+      try {
+        localStorage.setItem("mahjong-step-value", String(stepValue));
+      } catch {
+        // 忽略本地存储异常
+      }
+
+      render();
     }
 
     function applyDelta(opponent, amount, iWin) {
       const delta = Number(amount);
       if (iWin) {
-        balances[0] += delta;
-        balances[opponent] -= delta;
+        balances[0] = normalizeMoney(balances[0] + delta);
+        balances[opponent] = normalizeMoney(balances[opponent] - delta);
       } else {
-        balances[0] -= delta;
-        balances[opponent] += delta;
+        balances[0] = normalizeMoney(balances[0] - delta);
+        balances[opponent] = normalizeMoney(balances[opponent] + delta);
       }
 
       history.push({ opponent, amount: delta, iWin });
@@ -364,11 +475,11 @@
       if (!last) return;
 
       if (last.iWin) {
-        balances[0] -= last.amount;
-        balances[last.opponent] += last.amount;
+        balances[0] = normalizeMoney(balances[0] - last.amount);
+        balances[last.opponent] = normalizeMoney(balances[last.opponent] + last.amount);
       } else {
-        balances[0] += last.amount;
-        balances[last.opponent] -= last.amount;
+        balances[0] = normalizeMoney(balances[0] + last.amount);
+        balances[last.opponent] = normalizeMoney(balances[last.opponent] - last.amount);
       }
 
       render();
@@ -379,11 +490,11 @@
 
       const item = history[selectedHistoryIndex];
       if (item.iWin) {
-        balances[0] -= item.amount;
-        balances[item.opponent] += item.amount;
+        balances[0] = normalizeMoney(balances[0] - item.amount);
+        balances[item.opponent] = normalizeMoney(balances[item.opponent] + item.amount);
       } else {
-        balances[0] += item.amount;
-        balances[item.opponent] -= item.amount;
+        balances[0] = normalizeMoney(balances[0] + item.amount);
+        balances[item.opponent] = normalizeMoney(balances[item.opponent] - item.amount);
       }
 
       history.splice(selectedHistoryIndex, 1);
@@ -399,13 +510,14 @@
     }
 
     function renderSummary() {
-      document.getElementById("meValue").textContent = format(balances[0]);
-      document.getElementById("p1Value").textContent = format(balances[1]);
-      document.getElementById("p2Value").textContent = format(balances[2]);
-      document.getElementById("p3Value").textContent = format(balances[3]);
+      document.getElementById("meValue").textContent = formatMoney(balances[0]);
+      document.getElementById("p1Value").textContent = formatMoney(balances[1]);
+      document.getElementById("p2Value").textContent = formatMoney(balances[2]);
+      document.getElementById("p3Value").textContent = formatMoney(balances[3]);
       labelEls[1].textContent = playerNames[1];
       labelEls[2].textContent = playerNames[2];
       labelEls[3].textContent = playerNames[3];
+      stepHint.textContent = `当前步长：${formatPositiveMoney(stepValue)}`;
     }
 
     function renderHistory() {
@@ -419,9 +531,9 @@
         btn.className = "history-item";
         if (index === selectedHistoryIndex) btn.classList.add("selected");
         if (item.iWin) {
-          btn.textContent = `我赢${playerNames[item.opponent]} ${item.amount} 块`;
+          btn.textContent = `我赢${playerNames[item.opponent]} ${formatPositiveMoney(item.amount)} 块`;
         } else {
-          btn.textContent = `我输给${playerNames[item.opponent]} ${item.amount} 块`;
+          btn.textContent = `我输给${playerNames[item.opponent]} ${formatPositiveMoney(item.amount)} 块`;
         }
         btn.addEventListener("click", () => {
           selectedHistoryIndex = selectedHistoryIndex === index ? null : index;
@@ -448,10 +560,11 @@
 
         const lossRow = document.createElement("div");
         lossRow.className = "row";
+        const amounts = getAmounts();
         for (const amt of amounts) {
           const btn = document.createElement("button");
           btn.className = "loss";
-          btn.textContent = `-${amt}`;
+          btn.textContent = `-${formatPositiveMoney(amt)}`;
           btn.addEventListener("click", () => applyDelta(p, amt, false));
           lossRow.appendChild(btn);
         }
@@ -461,14 +574,14 @@
         for (const amt of amounts) {
           const btn = document.createElement("button");
           btn.className = "gain";
-          btn.textContent = `+${amt}`;
+          btn.textContent = formatMoney(amt);
           btn.addEventListener("click", () => applyDelta(p, amt, true));
           gainRow.appendChild(btn);
         }
 
         const foot = document.createElement("div");
         foot.className = "panel-foot";
-        foot.textContent = `当前对${playerNames[p]}净额: ${format(-balances[p])}（正数表示我赢）`;
+        foot.textContent = `当前对${playerNames[p]}净额: ${formatMoney(-balances[p])}（正数表示我赢）`;
 
         panel.append(title, lossRow, gainRow, foot);
         board.appendChild(panel);
@@ -485,7 +598,9 @@
     document.getElementById("undoSelectedBtn").addEventListener("click", undoSelected);
     document.getElementById("resetBtn").addEventListener("click", resetAll);
     document.getElementById("saveNamesBtn").addEventListener("click", saveNames);
+    document.getElementById("saveStepBtn").addEventListener("click", saveStep);
 
+    loadStep();
     loadNames();
 
     render();
