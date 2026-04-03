@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>麻将四人计分器</title>
+  <style>
+    :root {
+      --bg: #f4efe7;
+      --card: #fffaf2;
+      --line: #dbcdb8;
+      --text: #2e2418;
+      --muted: #7a6a58;
+      --gain: #1c7b4d;
+      --loss: #b23a2a;
+      --accent: #d08c2f;
+      --shadow: 0 12px 24px rgba(53, 37, 15, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 10% 10%, #fff8e8 0, transparent 42%),
+        radial-gradient(circle at 90% 5%, #f5e3c8 0, transparent 35%),
+        linear-gradient(170deg, #efe5d5, var(--bg));
+      min-height: 100vh;
+      padding: 18px;
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      background: rgba(255, 250, 242, 0.84);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(4px);
+      overflow: hidden;
+    }
+
+    .top {
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 10px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .stat small { color: var(--muted); }
+
+    .value {
+      margin-top: 6px;
+      font-size: 22px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .board {
+      padding: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .panel h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 14px rgba(79, 57, 26, 0.12);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .loss {
+      color: var(--loss);
+      background: #fff4f2;
+      border-color: #e8c1ba;
+    }
+
+    .gain {
+      color: var(--gain);
+      background: #f1fff7;
+      border-color: #b9dec8;
+    }
+
+    .panel-foot {
+      color: var(--muted);
+      font-size: 13px;
+      min-height: 18px;
+    }
+
+    .actions {
+      padding: 0 14px 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .main-btn {
+      border-radius: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .primary {
+      background: linear-gradient(120deg, #f6d18d, var(--accent));
+      border-color: #b77824;
+      color: #3b250e;
+    }
+
+    .hint {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .history {
+      border-top: 1px solid var(--line);
+      padding: 12px 14px 14px;
+      background: rgba(253, 247, 236, 0.7);
+    }
+
+    .history h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .history-list {
+      margin: 0;
+      padding-left: 18px;
+      max-height: 180px;
+      overflow: auto;
+      color: var(--muted);
+      display: grid;
+      gap: 4px;
+    }
+
+    @media (max-width: 860px) {
+      .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .board { grid-template-columns: 1fr; }
+      .hint { width: 100%; margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="top">
+      <h1 class="title">四人麻将输赢计数器</h1>
+      <div class="summary">
+        <div class="stat"><small>我（0号）</small><div class="value" id="meValue">0</div></div>
+        <div class="stat"><small>1号</small><div class="value" id="p1Value">0</div></div>
+        <div class="stat"><small>2号</small><div class="value" id="p2Value">0</div></div>
+        <div class="stat"><small>3号</small><div class="value" id="p3Value">0</div></div>
+      </div>
+    </section>
+
+    <section class="board" id="board"></section>
+
+    <section class="actions">
+      <button class="main-btn" id="undoBtn">撤销一步</button>
+      <button class="main-btn primary" id="resetBtn">新一局清零</button>
+      <div class="hint">红色: 我输给该玩家 | 绿色: 我赢该玩家</div>
+    </section>
+
+    <section class="history">
+      <h3>最近记录</h3>
+      <ol class="history-list" id="history"></ol>
+    </section>
+  </main>
+
+  <script>
+    const players = ["我（0号）", "1号", "2号", "3号"];
+    const others = [1, 2, 3];
+    const amounts = [1, 2, 3, 5, 10];
+    const balances = [0, 0, 0, 0];
+    const history = [];
+
+    const board = document.getElementById("board");
+    const historyEl = document.getElementById("history");
+
+    function format(n) {
+      if (n > 0) return `+${n}`;
+      return `${n}`;
+    }
+
+    function applyDelta(opponent, amount, iWin) {
+      const delta = Number(amount);
+      if (iWin) {
+        balances[0] += delta;
+        balances[opponent] -= delta;
+      } else {
+        balances[0] -= delta;
+        balances[opponent] += delta;
+      }
+
+      history.push({ opponent, amount: delta, iWin });
+      render();
+    }
+
+    function undo() {
+      const last = history.pop();
+      if (!last) return;
+
+      if (last.iWin) {
+        balances[0] -= last.amount;
+        balances[last.opponent] += last.amount;
+      } else {
+        balances[0] += last.amount;
+        balances[last.opponent] -= last.amount;
+      }
+
+      render();
+    }
+
+    function resetAll() {
+      for (let i = 0; i < balances.length; i += 1) balances[i] = 0;
+      history.length = 0;
+      render();
+    }
+
+    function renderSummary() {
+      document.getElementById("meValue").textContent = format(balances[0]);
+      document.getElementById("p1Value").textContent = format(balances[1]);
+      document.getElementById("p2Value").textContent = format(balances[2]);
+      document.getElementById("p3Value").textContent = format(balances[3]);
+    }
+
+    function renderHistory() {
+      historyEl.innerHTML = "";
+      const show = history.slice(-20).reverse();
+      for (const item of show) {
+        const li = document.createElement("li");
+        if (item.iWin) {
+          li.textContent = `我赢${item.opponent}号 ${item.amount} 块`;
+        } else {
+          li.textContent = `我输给${item.opponent}号 ${item.amount} 块`;
+        }
+        historyEl.appendChild(li);
+      }
+      if (!show.length) {
+        const li = document.createElement("li");
+        li.textContent = "暂无记录";
+        historyEl.appendChild(li);
+      }
+    }
+
+    function renderBoard() {
+      board.innerHTML = "";
+      for (const p of others) {
+        const panel = document.createElement("article");
+        panel.className = "panel";
+
+        const title = document.createElement("h2");
+        title.textContent = `与${players[p]}结算`;
+
+        const lossRow = document.createElement("div");
+        lossRow.className = "row";
+        for (const amt of amounts) {
+          const btn = document.createElement("button");
+          btn.className = "loss";
+          btn.textContent = `-${amt}`;
+          btn.addEventListener("click", () => applyDelta(p, amt, false));
+          lossRow.appendChild(btn);
+        }
+
+        const gainRow = document.createElement("div");
+        gainRow.className = "row";
+        for (const amt of amounts) {
+          const btn = document.createElement("button");
+          btn.className = "gain";
+          btn.textContent = `+${amt}`;
+          btn.addEventListener("click", () => applyDelta(p, amt, true));
+          gainRow.appendChild(btn);
+        }
+
+        const foot = document.createElement("div");
+        foot.className = "panel-foot";
+        foot.textContent = `当前对${players[p]}净额: ${format(-balances[p])}（正数表示我赢）`;
+
+        panel.append(title, lossRow, gainRow, foot);
+        board.appendChild(panel);
+      }
+    }
+
+    function render() {
+      renderSummary();
+      renderBoard();
+      renderHistory();
+    }
+
+    document.getElementById("undoBtn").addEventListener("click", undo);
+    document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+    render();
+  </script>
+</body>
+</html>
