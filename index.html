@@ -514,23 +514,13 @@
     <section class="hero">
       <div class="hero-top">
         <div>
-          <div class="kicker">GitHub Pages Ready</div>
-          <h1>Aurora Tap</h1>
+          <h1>Kick Test</h1>
           <p class="lead">
-            一个适合直接丢到 GitHub Pages 的单文件小游戏。
-            30 秒内尽量点中发光能量球，连击越高，分数越猛。
+            30 秒内尽量点中发光能量球，连击越多分数越高。
           </p>
-          <div class="tagline">Fast hands. Smooth glow. One file only.</div>
+          <div class="tagline">Fast hands to Win</div>
         </div>
         <div class="meta">
-          <div class="meta-card">
-            <div class="meta-label">部署方式</div>
-            <div class="meta-value">静态单页</div>
-          </div>
-          <div class="meta-card">
-            <div class="meta-label">技术栈</div>
-            <div class="meta-value">HTML/CSS/JS</div>
-          </div>
           <div class="meta-card">
             <div class="meta-label">时长</div>
             <div class="meta-value">30s</div>
@@ -556,24 +546,9 @@
         </div>
 
         <p class="hint">
-          目标会随机出现在场地中，并逐渐变小。你点得越快，
-          连击越高，最终得分越好。支持桌面和手机直接打开游玩。
+          目标会随机出现在场地中，点得越快，
+          连击越高，最终得分越高。
         </p>
-
-        <div class="highlights">
-          <div class="highlight">
-            <strong>视觉风格</strong>
-            深海霓虹 + 玻璃质感，单页也尽量不做得像模板站。
-          </div>
-          <div class="highlight">
-            <strong>部署方式</strong>
-            仓库根目录放 `index.html`，GitHub Pages 直接可用。
-          </div>
-          <div class="highlight">
-            <strong>本地记录</strong>
-            最高分保存在浏览器 `localStorage`，刷新也还在。
-          </div>
-        </div>
       </aside>
 
       <section class="panel game-wrap">
@@ -775,9 +750,12 @@
       statusText.innerHTML = `状态：本局结束，最终得分 <span class="accent">${score}</span>`;
 
       const rankText =
-        score >= 5200 ? "手速已经很猛了。" :
-        score >= 3600 ? "节奏不错，再稳一点还能更高。" :
-        "先熟悉节奏，下一把会明显提升。";
+        score >= 30000 ? "我靠，神了。" :
+        score >= 20000 ? "不错。" :
+        score >= 5200 ? "手速很猛。" :
+        score >= 3600 ? "节奏不错。" :
+        "先熟悉节奏。";
+
 
       setOverlay(
         `本局得分 ${score}`,
