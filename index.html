@@ -61,6 +61,39 @@
       gap: 10px;
     }
 
+    .namebar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+
+    .namebox {
+      display: grid;
+      gap: 6px;
+    }
+
+    .namebox label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .namebox input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+
+    .namebox input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(208, 140, 47, 0.12);
+    }
+
     .stat {
       background: var(--card);
       border: 1px solid var(--line);
@@ -181,16 +214,36 @@
 
     .history-list {
       margin: 0;
-      padding-left: 18px;
+      padding-left: 0;
       max-height: 180px;
       overflow: auto;
       color: var(--muted);
       display: grid;
       gap: 4px;
+      list-style: none;
+    }
+
+    .history-item {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.85);
+      color: inherit;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .history-item.selected {
+      border-color: var(--accent);
+      background: #fff2d6;
+      color: var(--text);
+      box-shadow: 0 0 0 2px rgba(208, 140, 47, 0.12) inset;
     }
 
     @media (max-width: 860px) {
       .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .namebar { grid-template-columns: 1fr; }
       .board { grid-template-columns: 1fr; }
       .hint { width: 100%; margin-left: 0; }
     }
@@ -200,11 +253,26 @@
   <main class="app">
     <section class="top">
       <h1 class="title">四人麻将输赢计数器</h1>
+      <div class="namebar">
+        <div class="namebox">
+          <label for="name1">1号名字</label>
+          <input id="name1" type="text" placeholder="输入1号名字">
+        </div>
+        <div class="namebox">
+          <label for="name2">2号名字</label>
+          <input id="name2" type="text" placeholder="输入2号名字">
+        </div>
+        <div class="namebox">
+          <label for="name3">3号名字</label>
+          <input id="name3" type="text" placeholder="输入3号名字">
+        </div>
+        <button class="main-btn primary" id="saveNamesBtn">确定名字</button>
+      </div>
       <div class="summary">
-        <div class="stat"><small>我（0号）</small><div class="value" id="meValue">0</div></div>
-        <div class="stat"><small>1号</small><div class="value" id="p1Value">0</div></div>
-        <div class="stat"><small>2号</small><div class="value" id="p2Value">0</div></div>
-        <div class="stat"><small>3号</small><div class="value" id="p3Value">0</div></div>
+        <div class="stat"><small id="meLabel">我（0号）</small><div class="value" id="meValue">0</div></div>
+        <div class="stat"><small id="p1Label">1号</small><div class="value" id="p1Value">0</div></div>
+        <div class="stat"><small id="p2Label">2号</small><div class="value" id="p2Value">0</div></div>
+        <div class="stat"><small id="p3Label">3号</small><div class="value" id="p3Value">0</div></div>
       </div>
     </section>
 
@@ -212,6 +280,7 @@
 
     <section class="actions">
       <button class="main-btn" id="undoBtn">撤销一步</button>
+      <button class="main-btn" id="undoSelectedBtn">撤销所选</button>
       <button class="main-btn primary" id="resetBtn">新一局清零</button>
       <div class="hint">红色: 我输给该玩家 | 绿色: 我赢该玩家</div>
     </section>
@@ -228,9 +297,48 @@
     const amounts = [1, 2, 3, 5, 10];
     const balances = [0, 0, 0, 0];
     const history = [];
+    let selectedHistoryIndex = null;
+    const playerNames = ["我（0号）", "1号", "2号", "3号"];
 
     const board = document.getElementById("board");
     const historyEl = document.getElementById("history");
+    const nameInputs = [document.getElementById("name1"), document.getElementById("name2"), document.getElementById("name3")];
+    const labelEls = [null, document.getElementById("p1Label"), document.getElementById("p2Label"), document.getElementById("p3Label")];
+
+    function loadNames() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("mahjong-player-names") || "null");
+        if (saved && Array.isArray(saved) && saved.length === 3) {
+          for (let i = 0; i < 3; i += 1) {
+            if (typeof saved[i] === "string" && saved[i].trim()) {
+              playerNames[i + 1] = saved[i].trim();
+              nameInputs[i].value = playerNames[i + 1];
+            }
+          }
+        }
+      } catch {
+        // 忽略本地存储异常
+      }
+    }
+
+    function saveNames() {
+      const nextNames = nameInputs.map((input, index) => {
+        const value = input.value.trim();
+        return value || `${index + 1}号`;
+      });
+
+      for (let i = 0; i < nextNames.length; i += 1) {
+        playerNames[i + 1] = nextNames[i];
+      }
+
+      try {
+        localStorage.setItem("mahjong-player-names", JSON.stringify(nextNames));
+      } catch {
+        // 忽略本地存储异常
+      }
+
+      render();
+    }
 
     function format(n) {
       if (n > 0) return `+${n}`;
@@ -266,9 +374,27 @@
       render();
     }
 
+    function undoSelected() {
+      if (selectedHistoryIndex === null || !history[selectedHistoryIndex]) return;
+
+      const item = history[selectedHistoryIndex];
+      if (item.iWin) {
+        balances[0] -= item.amount;
+        balances[item.opponent] += item.amount;
+      } else {
+        balances[0] += item.amount;
+        balances[item.opponent] -= item.amount;
+      }
+
+      history.splice(selectedHistoryIndex, 1);
+      selectedHistoryIndex = null;
+      render();
+    }
+
     function resetAll() {
       for (let i = 0; i < balances.length; i += 1) balances[i] = 0;
       history.length = 0;
+      selectedHistoryIndex = null;
       render();
     }
 
@@ -277,21 +403,34 @@
       document.getElementById("p1Value").textContent = format(balances[1]);
       document.getElementById("p2Value").textContent = format(balances[2]);
       document.getElementById("p3Value").textContent = format(balances[3]);
+      labelEls[1].textContent = playerNames[1];
+      labelEls[2].textContent = playerNames[2];
+      labelEls[3].textContent = playerNames[3];
     }
 
     function renderHistory() {
       historyEl.innerHTML = "";
-      const show = history.slice(-20).reverse();
-      for (const item of show) {
+      const startIndex = Math.max(0, history.length - 20);
+      for (let index = history.length - 1; index >= startIndex; index -= 1) {
+        const item = history[index];
         const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "history-item";
+        if (index === selectedHistoryIndex) btn.classList.add("selected");
         if (item.iWin) {
-          li.textContent = `我赢${item.opponent}号 ${item.amount} 块`;
+          btn.textContent = `我赢${playerNames[item.opponent]} ${item.amount} 块`;
         } else {
-          li.textContent = `我输给${item.opponent}号 ${item.amount} 块`;
+          btn.textContent = `我输给${playerNames[item.opponent]} ${item.amount} 块`;
         }
+        btn.addEventListener("click", () => {
+          selectedHistoryIndex = selectedHistoryIndex === index ? null : index;
+          renderHistory();
+        });
+        li.appendChild(btn);
         historyEl.appendChild(li);
       }
-      if (!show.length) {
+      if (startIndex === history.length) {
         const li = document.createElement("li");
         li.textContent = "暂无记录";
         historyEl.appendChild(li);
@@ -305,7 +444,7 @@
         panel.className = "panel";
 
         const title = document.createElement("h2");
-        title.textContent = `与${players[p]}结算`;
+        title.textContent = `与${playerNames[p]}结算`;
 
         const lossRow = document.createElement("div");
         lossRow.className = "row";
@@ -329,7 +468,7 @@
 
         const foot = document.createElement("div");
         foot.className = "panel-foot";
-        foot.textContent = `当前对${players[p]}净额: ${format(-balances[p])}（正数表示我赢）`;
+        foot.textContent = `当前对${playerNames[p]}净额: ${format(-balances[p])}（正数表示我赢）`;
 
         panel.append(title, lossRow, gainRow, foot);
         board.appendChild(panel);
@@ -343,7 +482,11 @@
     }
 
     document.getElementById("undoBtn").addEventListener("click", undo);
+    document.getElementById("undoSelectedBtn").addEventListener("click", undoSelected);
     document.getElementById("resetBtn").addEventListener("click", resetAll);
+    document.getElementById("saveNamesBtn").addEventListener("click", saveNames);
+
+    loadNames();
 
     render();
   </script>
