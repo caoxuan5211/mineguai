@@ -1,0 +1,392 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Outfit:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+  font-family: "Outfit", "Noto Sans SC", sans-serif;
+  --bg: #07110f;
+  --surface: rgba(10, 20, 18, 0.86);
+  --surface-strong: rgba(14, 26, 23, 0.96);
+  --line: rgba(214, 255, 240, 0.12);
+  --text: rgba(247, 250, 247, 0.95);
+  --muted: rgba(223, 238, 228, 0.62);
+  --accent: #78b99a;
+  --accent-strong: #bde7cf;
+  --accent-soft: rgba(120, 185, 154, 0.18);
+  --shadow: 0 32px 90px rgba(0, 0, 0, 0.35);
+  --glow: radial-gradient(circle at 50% 20%, rgba(120, 185, 154, 0.26), transparent 55%);
+  --hero-image: url("/windows_background.png");
+}
+
+[data-theme="ink"] {
+  --bg: #090b0e;
+  --surface: rgba(16, 18, 24, 0.88);
+  --surface-strong: rgba(20, 24, 30, 0.96);
+  --line: rgba(210, 218, 232, 0.12);
+  --accent: #a8b5c7;
+  --accent-strong: #eef4ff;
+  --accent-soft: rgba(168, 181, 199, 0.2);
+  --glow: radial-gradient(circle at 50% 20%, rgba(168, 181, 199, 0.22), transparent 58%);
+}
+
+[data-theme="brass"] {
+  --bg: #130b07;
+  --surface: rgba(30, 19, 11, 0.88);
+  --surface-strong: rgba(38, 24, 14, 0.96);
+  --line: rgba(255, 220, 183, 0.12);
+  --accent: #c79d6d;
+  --accent-strong: #ffe4c6;
+  --accent-soft: rgba(199, 157, 109, 0.2);
+  --glow: radial-gradient(circle at 50% 20%, rgba(199, 157, 109, 0.22), transparent 58%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.04), transparent 34%),
+    var(--glow),
+    linear-gradient(180deg, rgba(6, 12, 10, 0.96), rgba(6, 12, 10, 1));
+  color: var(--text);
+}
+
+a,
+button,
+input {
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease,
+    color 220ms ease,
+    box-shadow 220ms ease,
+    opacity 220ms ease;
+}
+
+button:active,
+a:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 3px;
+}
+
+.site-shell {
+  position: relative;
+  min-height: 100dvh;
+}
+
+.page-noise {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: soft-light;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.24) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px);
+  background-size: 140px 140px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 100;
+  padding: 0.8rem 1rem;
+  border-radius: 999px;
+  background: var(--accent-strong);
+  color: #08110f;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.section-space {
+  padding-block: clamp(7rem, 10vw, 11rem);
+}
+
+.hero-glow {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), transparent),
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.06), transparent 44%),
+    var(--hero-image) center/cover no-repeat;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.92), transparent 92%);
+  opacity: 0.68;
+}
+
+.hero-inline-pill {
+  display: inline-block;
+  width: 6rem;
+  height: 2.7rem;
+  margin-inline: 0.6rem;
+  vertical-align: 0.2em;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background:
+    linear-gradient(rgba(4, 8, 8, 0.26), rgba(4, 8, 8, 0.26)),
+    url("/andriod_background.png") center/cover no-repeat;
+  box-shadow: var(--shadow);
+}
+
+.soft-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 3.25rem;
+  padding: 0 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.soft-button:hover {
+  transform: translateY(-2px);
+}
+
+.soft-button--primary {
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: #08110f;
+  box-shadow: 0 24px 60px rgba(93, 149, 124, 0.22);
+}
+
+.soft-button--light {
+  background: rgba(255, 255, 255, 0.92);
+  color: #08110f;
+}
+
+.soft-button--ghost {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.feature-card,
+.arena-card,
+.summary-panel,
+.empty-panel,
+.final-cta {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent), var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.feature-card {
+  display: grid;
+  gap: 1.5rem;
+  min-height: 18rem;
+  padding: 1.75rem;
+  border-radius: 2rem;
+}
+
+.feature-icon,
+.summary-card svg {
+  display: inline-flex;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+.story-card,
+.precision-card,
+.arena-shell,
+.summary-card,
+.timeline-card,
+.archive-card,
+.theme-chip,
+.player-chip {
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow);
+}
+
+.story-card {
+  position: relative;
+  padding: 2rem;
+  border-radius: 2rem;
+}
+
+.story-index,
+.eyebrow {
+  display: inline-flex;
+  font-size: 0.76rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+.theme-chip,
+.player-chip,
+.dealer-chip,
+.segment-button,
+.score-button {
+  border-radius: 1.35rem;
+}
+
+.theme-chip,
+.player-chip,
+.dealer-chip,
+.segment-button {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+}
+
+.theme-chip--active,
+.player-chip--active,
+.dealer-chip--active,
+.segment-button--active {
+  border-color: color-mix(in srgb, var(--accent-strong) 54%, transparent);
+  background: var(--accent-soft);
+}
+
+.player-chip__tone {
+  font-size: 0.74rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.arena-shell {
+  padding: 1rem;
+  border-radius: 2.4rem;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.04), transparent 22%),
+    var(--surface);
+}
+
+.arena-card,
+.summary-card,
+.summary-panel,
+.empty-panel,
+.final-cta,
+.precision-card,
+.timeline-card,
+.archive-card {
+  border-radius: 2rem;
+}
+
+.arena-card,
+.summary-panel,
+.empty-panel,
+.final-cta,
+.precision-card,
+.timeline-card,
+.archive-card {
+  padding: 1.5rem;
+}
+
+.summary-card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.35rem;
+}
+
+.summary-card small,
+.summary-panel small,
+.archive-card small {
+  color: var(--muted);
+}
+
+.summary-card strong,
+.summary-panel strong {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+.step-field,
+.name-field {
+  display: grid;
+  gap: 0.45rem;
+  color: var(--muted);
+}
+
+.step-field input,
+.name-field input {
+  min-height: 3rem;
+  padding: 0 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.score-button {
+  min-height: 3.2rem;
+  border: 1px solid transparent;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.score-button:hover,
+.timeline-card:hover {
+  transform: translateY(-2px);
+}
+
+.score-button--compact {
+  min-height: 2.85rem;
+}
+
+.score-button--win {
+  background: rgba(120, 185, 154, 0.12);
+  border-color: rgba(159, 234, 203, 0.14);
+}
+
+.score-button--lose {
+  background: rgba(205, 123, 123, 0.12);
+  border-color: rgba(255, 176, 176, 0.14);
+}
+
+.timeline-card {
+  width: 100%;
+  text-align: left;
+}
+
+.timeline-card--selected {
+  border-color: var(--accent-strong);
+  background: linear-gradient(180deg, var(--accent-soft), rgba(255, 255, 255, 0.03));
+}
+
+.timeline-card--muted {
+  opacity: 0.54;
+}
+
+.archive-card {
+  display: grid;
+  gap: 0.2rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.final-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (max-width: 860px) {
+  :root {
+    --hero-image: url("/andriod_background.png");
+  }
+
+  .hero-inline-pill {
+    width: 4.7rem;
+    height: 2.2rem;
+  }
+}
