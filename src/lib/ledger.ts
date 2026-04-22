@@ -1,14 +1,14 @@
-export type ThemeId = "jade" | "ink" | "brass";
-export type StageId = "east" | "south";
 export type ModeId = "rapid" | "precision";
 export type DirectionId = "win" | "lose";
+export type ThemeId = "jade" | "ink" | "brass";
+export type StageId = "east" | "south";
 
 export type Player = {
   id: number;
   name: string;
   balance: number;
-  isDealer: boolean;
   accentToken: "jade" | "gold" | "mist" | "ember";
+  isDealer?: boolean;
 };
 
 export type RecordItem = {
@@ -24,22 +24,22 @@ export type RecordItem = {
 export type SessionSnapshot = {
   id: string;
   roundIndex: number;
-  stage: StageId;
   endedAt: number;
   leaderName: string;
   spread: number;
-  theme: ThemeId;
   balances: number[];
   records: RecordItem[];
+  stage: StageId;
+  theme: ThemeId;
 };
 
 export type SessionState = {
   sessionId: string;
   roundIndex: number;
-  stage: StageId;
   stepValue: number;
-  theme: ThemeId;
   createdAt: number;
+  stage: StageId;
+  theme: ThemeId;
 };
 
 export type LedgerState = {
@@ -58,64 +58,34 @@ const DEFAULT_NAMES = ["我", "阿泽", "明叔", "小棠"] as const;
 const DEFAULT_STEP = 1;
 const STEP_INCREMENT = 0.5;
 const MULTIPLIERS = [1, 2, 3, 5, 10] as const;
+const ACCENT_TOKENS = ["jade", "gold", "mist", "ember"] as const;
 
 function createId(prefix: string) {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function normalizeMoney(value: number) {
+function roundAmount(value: number) {
   return Math.round(value * 100) / 100;
-}
-
-export function normalizeStep(value: number) {
-  const snapped = Math.round(value / STEP_INCREMENT) * STEP_INCREMENT;
-  return Math.max(STEP_INCREMENT, normalizeMoney(snapped));
-}
-
-export function formatMoney(value: number) {
-  const rounded = normalizeMoney(value);
-  const text = rounded.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
-  return rounded > 0 ? `+${text}` : text;
-}
-
-export function formatAmount(value: number) {
-  return formatMoney(value).replace(/^\+/, "");
-}
-
-export function formatClock(timestamp: number) {
-  return new Intl.DateTimeFormat("zh-CN", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(timestamp);
-}
-
-export function getStepAmounts(stepValue: number) {
-  return MULTIPLIERS.map((multiplier) => normalizeMoney(multiplier * stepValue));
-}
-
-function createPlayers(names = DEFAULT_NAMES) {
-  return names.map((name, index) => ({
-    id: index,
-    name,
-    balance: 0,
-    isDealer: index === 0,
-    accentToken: (["jade", "gold", "mist", "ember"] as const)[index],
-  }));
 }
 
 function clonePlayers(players: Player[]) {
   return players.map((player) => ({ ...player }));
 }
 
-function resetPlayers(players: Player[]) {
-  return players.map((player) => ({ ...player, balance: 0 }));
+function getActiveRecords(records: RecordItem[]) {
+  return records.filter((record) => !record.reverted);
 }
 
-function findPlayerName(players: Player[], playerId: number) {
-  return players.find((player) => player.id === playerId)?.name ?? "玩家";
+function buildPlayers() {
+  return DEFAULT_NAMES.map((name, index) => ({
+    id: index,
+    name,
+    balance: 0,
+    accentToken: ACCENT_TOKENS[index],
+  }));
 }
 
-function applyBalanceChange(
+function applyBalanceDelta(
   players: Player[],
   opponentId: number,
   amount: number,
@@ -123,50 +93,46 @@ function applyBalanceChange(
 ) {
   const me = players[0];
   const opponent = players.find((player) => player.id === opponentId);
+
   if (!me || !opponent) {
     return;
   }
 
-  if (direction === "win") {
-    me.balance = normalizeMoney(me.balance + amount);
-    opponent.balance = normalizeMoney(opponent.balance - amount);
-    return;
-  }
-
-  me.balance = normalizeMoney(me.balance - amount);
-  opponent.balance = normalizeMoney(opponent.balance + amount);
+  const delta = direction === "win" ? amount : -amount;
+  me.balance = roundAmount(me.balance + delta);
+  opponent.balance = roundAmount(opponent.balance - delta);
 }
 
-function reverseBalanceChange(
+function reverseBalanceDelta(
   players: Player[],
   opponentId: number,
   amount: number,
   direction: DirectionId,
 ) {
-  applyBalanceChange(players, opponentId, amount, direction === "win" ? "lose" : "win");
-}
-
-function activeRecords(records: RecordItem[]) {
-  return records.filter((record) => !record.reverted);
+  applyBalanceDelta(players, opponentId, amount, direction === "win" ? "lose" : "win");
 }
 
 function createSnapshot(state: LedgerState): SessionSnapshot | null {
-  const currentRecords = activeRecords(state.records);
-  if (currentRecords.length === 0) {
+  const liveRecords = getActiveRecords(state.records);
+  if (liveRecords.length === 0) {
     return null;
   }
 
   return {
     id: state.session.sessionId,
     roundIndex: state.session.roundIndex,
-    stage: state.session.stage,
     endedAt: Date.now(),
     leaderName: getCurrentLeader(state).name,
     spread: getLargestSpread(state),
-    theme: state.session.theme,
     balances: state.players.map((player) => player.balance),
     records: state.records.map((record) => ({ ...record })),
+    stage: state.session.stage,
+    theme: state.session.theme,
   };
+}
+
+function resetPlayers(players: Player[]) {
+  return players.map((player) => ({ ...player, balance: 0 }));
 }
 
 function resetSession(state: LedgerState, incrementRound: boolean) {
@@ -188,16 +154,42 @@ function resetSession(state: LedgerState, incrementRound: boolean) {
   };
 }
 
+export function normalizeStep(value: number) {
+  const snapped = Math.round(value / STEP_INCREMENT) * STEP_INCREMENT;
+  return Math.max(STEP_INCREMENT, roundAmount(snapped));
+}
+
+export function formatMoney(value: number) {
+  const rounded = roundAmount(value);
+  const text = rounded.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
+  return rounded > 0 ? `+${text}` : text;
+}
+
+export function formatAmount(value: number) {
+  return formatMoney(value).replace(/^\+/, "");
+}
+
+export function formatClock(timestamp: number) {
+  return new Intl.DateTimeFormat("zh-CN", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(timestamp);
+}
+
+export function getStepAmounts(stepValue: number) {
+  return MULTIPLIERS.map((multiplier) => roundAmount(multiplier * stepValue));
+}
+
 export function createInitialState(): LedgerState {
   return {
-    players: createPlayers(),
+    players: buildPlayers(),
     session: {
       sessionId: createId("session"),
       roundIndex: 1,
-      stage: "east",
       stepValue: DEFAULT_STEP,
-      theme: "jade",
       createdAt: Date.now(),
+      stage: "east",
+      theme: "ink",
     },
     records: [],
     archivedSessions: [],
@@ -216,8 +208,8 @@ export function applyRecord(
   }
 
   const nextPlayers = clonePlayers(state.players);
-  const nextAmount = normalizeMoney(amount);
-  applyBalanceChange(nextPlayers, opponentId, nextAmount, direction);
+  const nextAmount = roundAmount(amount);
+  applyBalanceDelta(nextPlayers, opponentId, nextAmount, direction);
 
   return {
     ...state,
@@ -244,7 +236,7 @@ export function undoRecordById(state: LedgerState, recordId: string) {
   }
 
   const nextPlayers = clonePlayers(state.players);
-  reverseBalanceChange(nextPlayers, target.opponentId, target.amount, target.direction);
+  reverseBalanceDelta(nextPlayers, target.opponentId, target.amount, target.direction);
 
   return {
     ...state,
@@ -278,16 +270,6 @@ export function setPlayerNames(state: LedgerState, names: string[]) {
   };
 }
 
-export function setDealer(state: LedgerState, playerId: number) {
-  return {
-    ...state,
-    players: state.players.map((player) => ({
-      ...player,
-      isDealer: player.id === playerId,
-    })),
-  };
-}
-
 export function setStepValue(state: LedgerState, value: number) {
   return {
     ...state,
@@ -298,22 +280,26 @@ export function setStepValue(state: LedgerState, value: number) {
   };
 }
 
-export function setTheme(state: LedgerState, theme: ThemeId) {
+export function setDealer(state: LedgerState, _playerId: number) {
+  return state;
+}
+
+export function setTheme(state: LedgerState, _theme: ThemeId) {
   return {
     ...state,
     session: {
       ...state.session,
-      theme,
+      theme: _theme,
     },
   };
 }
 
-export function setStage(state: LedgerState, stage: StageId) {
+export function setStage(state: LedgerState, _stage: StageId) {
   return {
     ...state,
     session: {
       ...state.session,
-      stage,
+      stage: _stage,
     },
   };
 }
@@ -324,48 +310,46 @@ export function getCurrentLeader(state: LedgerState) {
 
 export function getLargestSpread(state: LedgerState) {
   const balances = state.players.map((player) => player.balance);
-  return normalizeMoney(Math.max(...balances) - Math.min(...balances));
-}
-
-export function getRecentActions(state: LedgerState, limit: number) {
-  return activeRecords(state.records).slice(-limit).reverse();
+  return roundAmount(Math.max(...balances) - Math.min(...balances));
 }
 
 export function getNetResultByPlayer(state: LedgerState): NetResult[] {
   const totals = new Map<number, number>();
-  for (const record of activeRecords(state.records)) {
-    const existing = totals.get(record.opponentId) ?? 0;
+
+  for (const record of getActiveRecords(state.records)) {
+    const current = totals.get(record.opponentId) ?? 0;
     const delta = record.direction === "win" ? record.amount : -record.amount;
-    totals.set(record.opponentId, normalizeMoney(existing + delta));
+    totals.set(record.opponentId, roundAmount(current + delta));
   }
 
   return state.players
     .filter((player) => player.id !== 0)
-    .map((player) => ({
-      player,
-      total: totals.get(player.id) ?? 0,
-    }));
+    .map((player) => ({ player, total: totals.get(player.id) ?? 0 }));
+}
+
+export function getRecentActions(state: LedgerState, limit: number) {
+  return getActiveRecords(state.records).slice(-limit).reverse();
 }
 
 export function getMomentumSummary(state: LedgerState) {
-  const recent = activeRecords(state.records).slice(-5);
+  const recent = getActiveRecords(state.records).slice(-5);
   if (recent.length === 0) {
-    return "这一局还没落子，适合直接开一波漂亮的节奏。";
+    return "还没有动作，先点桌上的人再记一笔。";
   }
 
   const wins = recent.filter((record) => record.direction === "win").length;
   const losses = recent.length - wins;
   if (wins === losses) {
-    return "最近手感均衡，局势还在拉扯。";
+    return "最近几笔还在拉扯，局面没有完全倾斜。";
   }
 
   return wins > losses
-    ? `最近 ${recent.length} 笔里你赢了 ${wins} 次，节奏正在抬头。`
-    : `最近 ${recent.length} 笔里你输了 ${losses} 次，需要一手扳回。`;
+    ? `最近 ${recent.length} 笔里你赢了 ${wins} 次。`
+    : `最近 ${recent.length} 笔里你输了 ${losses} 次。`;
 }
 
 export function describeRecord(state: LedgerState, record: RecordItem) {
-  const targetName = findPlayerName(state.players, record.opponentId);
-  const verb = record.direction === "win" ? "赢了" : "给了";
-  return `我${verb}${targetName} ${formatAmount(record.amount)}`;
+  const name =
+    state.players.find((player) => player.id === record.opponentId)?.name ?? "玩家";
+  return `我${record.direction === "win" ? "赢了" : "输给"}${name} ${formatAmount(record.amount)}`;
 }

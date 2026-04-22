@@ -1,48 +1,53 @@
-import { FloatingNav } from "./components/FloatingNav";
-import { FeatureGrid } from "./components/FeatureGrid";
-import { FinalCta } from "./components/FinalCta";
-import { HeroSection } from "./components/HeroSection";
-import { PinnedStory } from "./components/PinnedStory";
-import { ScoreArena } from "./components/ScoreArena";
-import { SessionReplay } from "./components/SessionReplay";
+import { HistorySheet } from "./components/HistorySheet";
+import { RoundTableLedger } from "./components/RoundTableLedger";
 import { useLedger } from "./hooks/useLedger";
 
 export default function App() {
   const ledger = useLedger();
 
   return (
-    <main className="site-shell overflow-x-hidden" data-theme={ledger.state.session.theme}>
+    <main className="site-shell overflow-x-hidden w-full max-w-full">
       <a href="#main-content" className="skip-link">
         跳到内容
       </a>
       <div className="page-noise" aria-hidden="true" />
-      <FloatingNav />
-      <div id="main-content">
-        <HeroSection />
-        <FeatureGrid />
-        <PinnedStory />
-        <ScoreArena
+
+      <div className="site-frame" id="main-content">
+        <header className="top-nav">
+          <span className="top-nav__brand">Mahjong Ledger</span>
+          <span className="top-nav__status">mobile-first scoring table</span>
+        </header>
+
+        <section className="hero-shell">
+          <p className="hero-shell__eyebrow">桌边快记，不再像旧式工具页</p>
+          <h1 className="hero-shell__title">
+            把一桌输赢
+            <span className="hero-inline-pill" aria-hidden="true" />
+            收进一张更顺手的掌上圆桌。
+          </h1>
+          <p className="hero-shell__copy">
+            这一版只留下核心动作：改名、步长、记分、撤销、开新局、历史记录。其它低价值逻辑全部退出主舞台。
+          </p>
+        </section>
+
+        <RoundTableLedger
           state={ledger.state}
           currentLeader={ledger.currentLeader}
           largestSpread={ledger.largestSpread}
-          momentumSummary={ledger.momentumSummary}
           netResults={ledger.netResults}
           onApplyRecord={ledger.applyRecord}
-          onEndSession={ledger.endSession}
+          onUndoLast={ledger.undoLast}
           onNextSession={ledger.nextSession}
-          onSetDealer={ledger.setDealer}
           onSetPlayerNames={ledger.setPlayerNames}
-          onSetStage={ledger.setStage}
           onSetStepValue={ledger.setStepValue}
-          onSetTheme={ledger.setTheme}
         />
-        <SessionReplay
+
+        <HistorySheet
           state={ledger.state}
           currentLeader={ledger.currentLeader}
-          onUndoLast={ledger.undoLast}
+          onEndSession={ledger.endSession}
           onUndoRecord={ledger.undoRecord}
         />
-        <FinalCta />
       </div>
     </main>
   );
