@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mineguai 麻将记账器</title>
+    <meta
+      name="description"
+      content="四人麻将本地记账器，支持改名、步长、自摸、点炮、手动转账、撤销和导入导出。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Outfit:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <nav class="nav-card">
+        <a class="brand" href="#top" aria-label="Mineguai 麻将记账器首页">
+          <span class="brand-mark">M</span>
+          <span>Mineguai Ledger</span>
+        </a>
+        <div class="nav-actions">
+          <button class="ghost-button" id="exportButton" type="button">导出账本</button>
+          <label class="ghost-button import-label" for="importInput">导入</label>
+          <input id="importInput" type="file" accept="application/json" hidden />
+        </div>
+      </nav>
+
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">麻将桌上的实时结算中枢</p>
+          <h1>
+            四个人坐下，
+            <span class="inline-photo" aria-hidden="true"></span>
+            账目即时归零。
+          </h1>
+          <p class="hero-text">
+            为熟人局设计的轻交互记账器。你自己默认放在第一位，常用操作只需要点选输赢、
+            输入步长，所有分数、历史和统计都会保存在本机浏览器。
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#ledger">开始记账</a>
+            <button class="secondary-button" id="resetButton" type="button">清空重开</button>
+          </div>
+        </div>
+        <aside class="hero-panel" aria-label="账本状态概览">
+          <div class="glass-orb"></div>
+          <p class="panel-title">当前总账</p>
+          <strong id="netBalance">0</strong>
+          <span>四人零和校验</span>
+          <div class="mini-bars" id="miniBars"></div>
+        </aside>
+      </section>
+
+      <section class="bento-grid" aria-label="快捷统计">
+        <article class="bento-card wide">
+          <p>本局记录</p>
+          <strong id="roundCount">0</strong>
+          <span>每一手都可撤销或删除</span>
+        </article>
+        <article class="bento-card accent">
+          <p>默认步长</p>
+          <label class="step-field">
+            <input id="stepInput" type="number" min="1" step="1" />
+            <span>分</span>
+          </label>
+        </article>
+        <article class="bento-card">
+          <p>最大单手</p>
+          <strong id="biggestRound">0</strong>
+          <span>自动跟踪输赢峰值</span>
+        </article>
+        <article class="bento-card">
+          <p>庄家 / 我</p>
+          <strong id="selfName">我</strong>
+          <span>默认减少选择成本</span>
+        </article>
+        <article class="bento-card image-card">
+          <span>离线可用</span>
+        </article>
+        <article class="bento-card wide muted">
+          <p>数据安全</p>
+          <span>所有数据只保存在当前浏览器，可随时导出 JSON 备份。</span>
+        </article>
+      </section>
+
+      <section class="ledger-layout" id="ledger">
+        <section class="card-stack" aria-label="玩家分数">
+          <div class="section-heading">
+            <p class="eyebrow">Players</p>
+            <h2>改名、看分、对账。</h2>
+          </div>
+          <div class="players-grid" id="playersGrid"></div>
+        </section>
+
+        <section class="record-panel" aria-label="记一手牌">
+          <div class="section-heading">
+            <p class="eyebrow">Record</p>
+            <h2>一手牌，两种常用算法。</h2>
+          </div>
+
+          <form id="recordForm" class="record-form">
+            <div class="mode-tabs" role="tablist" aria-label="记账模式">
+              <button class="mode-tab is-active" type="button" data-mode="selfDraw">自摸</button>
+              <button class="mode-tab" type="button" data-mode="discard">点炮</button>
+              <button class="mode-tab" type="button" data-mode="transfer">转账</button>
+            </div>
+
+            <label>
+              赢家 / 收款人
+              <select id="winnerSelect"></select>
+            </label>
+            <label id="loserField">
+              点炮 / 付款人
+              <select id="loserSelect"></select>
+            </label>
+            <label>
+              金额
+              <input id="amountInput" type="number" min="1" step="1" />
+            </label>
+            <label>
+              备注
+              <input id="noteInput" type="text" maxlength="40" placeholder="例如 清一色、杠上花" />
+            </label>
+            <button class="submit-button" type="submit">记入账本</button>
+          </form>
+        </section>
+      </section>
+
+      <section class="history-section" aria-label="历史记录">
+        <div class="section-heading sticky-title">
+          <p class="eyebrow">History</p>
+          <h2>流水清楚，结账不吵。</h2>
+          <p>最近记录在上方。误点可以撤销最后一笔，也可以删除指定记录。</p>
+          <button class="secondary-button compact" id="undoButton" type="button">撤销上一笔</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+
+      <footer class="footer-cta">
+        <p>收工时只看正负余额。</p>
+        <h2>少算一笔钱，多打一圈牌。</h2>
+        <a class="primary-button" href="#ledger">继续记账</a>
+      </footer>
+    </main>
+    <script src="./app.js" defer></script>
+  </body>
+</html>
