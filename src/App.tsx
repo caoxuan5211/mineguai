@@ -105,7 +105,7 @@ export default function App() {
       <section className="hero">
         <div>
           <p className="kicker">one-tap personal ledger</p>
-          <h1>只记一件事：我对谁，赢了或输了多少。</h1>
+          <h1>麻将记账器</h1>
         </div>
         <aside className="hero-ticket">
           <span>我的总盈亏</span>
