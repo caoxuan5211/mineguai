@@ -54,10 +54,10 @@ export function RapidPad({ players, stepValue, onApplyRecord }: RapidPadProps) {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="space-y-3 rounded-[2rem] border border-rose-100/10 bg-rose-300/5 p-5">
+        <div className="space-y-3 rounded-[2rem] border border-red-100/10 bg-red-500/10 p-5">
           <div className="flex items-center justify-between">
             <strong className="text-lg text-white">我输给 {players[selectedOpponentId]?.name}</strong>
-            <span className="text-sm text-rose-200/70">lose</span>
+            <span className="text-sm text-red-200/70">lose</span>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {amounts.map((amount) => (

@@ -1,0 +1,159 @@
+.workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr);
+  gap: 1rem;
+  align-items: start;
+}
+.panel {
+  border: 2px solid var(--line);
+  background: #fff8df;
+  box-shadow: var(--shadow);
+  padding: clamp(1rem, 3vw, 1.6rem);
+}
+.panel-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.panel h2, .history h2 {
+  margin: 0;
+  font-size: clamp(2.4rem, 6vw, 5.4rem);
+  line-height: .86;
+  letter-spacing: -.08em;
+}
+.record-panel { display: grid; gap: 1rem; }
+.record-panel label {
+  display: grid;
+  gap: .45rem;
+  color: var(--muted);
+  font-size: .9rem;
+  font-weight: 900;
+}
+.record-panel input, .record-panel select {
+  width: 100%;
+  min-height: 3.2rem;
+  border: 2px solid var(--line);
+  border-radius: 0;
+  background: #fffdf0;
+  color: var(--ink);
+  padding: 0 .9rem;
+  font-weight: 900;
+  outline: 0;
+}
+.opponent-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .6rem;
+}
+.opponent-strip button {
+  display: grid;
+  justify-items: start;
+  align-content: space-between;
+  min-height: 8.5rem;
+  padding: .85rem;
+  background: linear-gradient(135deg, rgba(15, 122, 85, .16), transparent 48%), #fff8df;
+}
+.opponent-strip button.active {
+  background: var(--ink);
+  color: var(--acid);
+  transform: translate(-4px, -4px);
+  box-shadow: 8px 8px 0 var(--jade);
+}
+.opponent-strip span { color: var(--muted); font-size: .92rem; }
+.opponent-strip strong {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  line-height: .85;
+  letter-spacing: -.07em;
+  font-variant-numeric: tabular-nums;
+}
+.opponent-strip .active span { color: #fff; }
+.direction-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .6rem;
+  padding: .45rem;
+  border: 2px solid var(--line);
+  background: linear-gradient(90deg, rgba(13, 16, 12, .08) 1px, transparent 1px), #e3dbc4;
+  background-size: 12px 12px;
+}
+.direction-switch button {
+  min-height: 6rem;
+  font-size: clamp(1.7rem, 4vw, 3.4rem);
+  letter-spacing: -.06em;
+}
+.direction-switch button.active.win { background: var(--acid); }
+.direction-switch button.active.lose { background: var(--deep-red); color: #fff; }
+.quick-amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: .45rem; }
+.quick-amounts button {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: .25rem;
+  min-height: 3.2rem;
+  background: #fffdf0;
+  font-variant-numeric: tabular-nums;
+}
+.quick-amounts button span {
+  color: var(--muted);
+  font-size: .76rem;
+  letter-spacing: .12em;
+}
+.quick-amounts button strong {
+  font-size: clamp(1.45rem, 4vw, 2.7rem);
+  line-height: .85;
+}
+.amount-row { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+.step-editor {
+  position: relative;
+  max-width: 22rem;
+}
+.step-editor input {
+  min-height: 4.2rem;
+  background: var(--paper-hot);
+  font-size: clamp(2rem, 6vw, 4rem);
+  letter-spacing: -.06em;
+}
+.form-error {
+  margin: 0;
+  padding: .8rem 1rem;
+  border: 2px solid var(--line);
+  background: var(--orange);
+  color: #fff;
+  font-weight: 900;
+}
+.commit-button { min-height: 4.2rem; background: var(--acid); font-size: 1.1rem; }
+.settlement-panel { position: sticky; top: 98px; }
+.settlement-list { display: grid; gap: .65rem; min-height: 12rem; }
+.settlement-list p {
+  margin: 0;
+  padding: .9rem;
+  border: 2px dashed var(--line);
+  background: linear-gradient(135deg, var(--cyan), #fff8df);
+  font-weight: 900;
+}
+.tool-row { display: grid; grid-template-columns: 1fr 1fr; gap: .7rem; margin-top: 1rem; }
+.tool-row button { min-height: 3rem; }
+.history {
+  display: grid;
+  grid-template-columns: minmax(260px, .55fr) minmax(0, 1fr);
+  gap: 1rem;
+  padding-top: clamp(3rem, 8vw, 7rem);
+}
+.history-head { position: sticky; top: 98px; align-self: start; }
+.history-list { display: grid; gap: .7rem; }
+.history-item, .empty {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .8rem;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid var(--line);
+  background: #fff8df;
+  box-shadow: 5px 5px 0 var(--line);
+}
+.history-item strong { display: block; margin-bottom: .3rem; }
+.history-item small { color: var(--muted); font-weight: 800; }
+.history-item button { min-height: 2.5rem; padding: 0 .8rem; background: #f2f2ee; }
+.empty { grid-template-columns: 1fr; color: var(--muted); font-weight: 900; }
