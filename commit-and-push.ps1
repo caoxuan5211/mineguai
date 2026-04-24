@@ -45,5 +45,16 @@ if ($changes) {
   Write-Host "没有检测到需要提交的文件变更。"
 }
 
+$remoteBranchExists = $false
+& git ls-remote --exit-code --heads origin $Branch | Out-Null
+if ($LASTEXITCODE -eq 0) {
+  $remoteBranchExists = $true
+}
+
+if ($remoteBranchExists) {
+  Invoke-Git fetch origin $Branch
+  Invoke-Git rebase "origin/$Branch"
+}
+
 Invoke-Git push -u origin $Branch
 Write-Host "已推送到 $RemoteUrl 的 $Branch 分支。"
