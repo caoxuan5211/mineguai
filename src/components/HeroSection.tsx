@@ -33,16 +33,19 @@ export function HeroSection() {
     >
       <div data-hero-glow className="hero-glow absolute inset-x-0 top-0 h-[62rem]" />
       <div className="relative z-10 mx-auto flex min-h-[88dvh] max-w-[1500px] flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-        <p className="mb-8 text-sm tracking-[0.34em] text-white/55">
+        <p className="mb-8 text-sm tracking-normal text-white/55">
           东方暗奢记分器 / LOCAL-FIRST SCORE ARENA
         </p>
         <h1
           data-hero-title
-          className="mx-auto max-w-6xl text-[clamp(3.4rem,9vw,7.6rem)] font-black leading-[0.92] tracking-[-0.06em] text-balance text-white"
+          className="hero-title mx-auto max-w-6xl text-[clamp(3.2rem,8vw,6rem)] font-black leading-[0.94] tracking-[-0.035em] text-balance text-white"
         >
-          把一桌输赢，记成
-          <span className="hero-inline-pill" aria-hidden="true" />
-          一场仪式
+          <span>把一桌输赢</span>
+          <span>
+            记成
+            <span className="hero-inline-pill" aria-hidden="true" />
+            一场仪式
+          </span>
         </h1>
         <p
           data-hero-copy

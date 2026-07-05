@@ -4,8 +4,8 @@ export function FinalCta() {
       <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
         <div className="final-cta">
           <div className="space-y-6">
-            <p className="text-sm tracking-[0.2em] text-white/45">继续往前</p>
-            <h2 className="max-w-4xl text-4xl font-bold tracking-[-0.05em] text-white sm:text-6xl">
+            <p className="text-sm tracking-normal text-white/45">继续往前</p>
+            <h2 className="max-w-4xl text-4xl font-bold tracking-[-0.035em] text-white sm:text-6xl">
               继续下一局，或者把这一局留在页面里慢慢回看。
             </h2>
             <p className="max-w-2xl text-lg leading-8 text-white/66">
@@ -22,7 +22,7 @@ export function FinalCta() {
           </div>
         </div>
 
-        <footer className="mt-8 grid gap-5 rounded-[2rem] border border-white/10 bg-white/4 px-6 py-8 text-sm text-white/58 lg:grid-cols-3">
+        <footer className="mt-8 grid gap-5 rounded-2xl border border-white/10 bg-white/4 px-6 py-8 text-sm text-white/58 lg:grid-cols-3">
           <div>
             <strong className="block text-white">Mahjong Ledger</strong>
             <p className="mt-2">

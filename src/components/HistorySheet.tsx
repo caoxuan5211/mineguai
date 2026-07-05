@@ -31,12 +31,18 @@ export function HistorySheet({
 
   useGSAP(
     () => {
-      gsap.from(".history-card", {
+      const cards = gsap.utils.toArray<HTMLElement>(".history-card");
+      if (!cards.length) {
+        return;
+      }
+
+      gsap.from(cards, {
         y: 60,
         opacity: 0,
         stagger: 0.07,
         duration: 0.8,
         ease: "power3.out",
+        immediateRender: false,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 78%",

@@ -51,6 +51,7 @@ export function PinnedStory() {
         stagger: 0.15,
         duration: 1,
         ease: "power3.out",
+        immediateRender: false,
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 70%",
@@ -64,8 +65,8 @@ export function PinnedStory() {
     <section ref={sectionRef} className="section-space relative overflow-hidden">
       <div className="mx-auto grid max-w-[1500px] gap-10 px-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-8">
         <div ref={pinRef} className="space-y-6 lg:pt-10">
-          <p className="text-sm tracking-[0.2em] text-white/45">局势如何成形</p>
-          <h2 className="max-w-xl text-4xl font-bold tracking-[-0.05em] text-white sm:text-5xl">
+          <p className="text-sm tracking-normal text-white/45">局势如何成形</p>
+          <h2 className="max-w-xl text-4xl font-bold tracking-[-0.035em] text-white sm:text-5xl">
             一局牌，不该只剩最后一个数字。
           </h2>
           <p className="max-w-lg text-base leading-7 text-white/64">
@@ -81,7 +82,7 @@ export function PinnedStory() {
               style={{ zIndex: storyCards.length - index }}
             >
               <span className="story-index">0{index + 1}</span>
-              <h3 className="text-3xl font-semibold tracking-[-0.04em] text-white">
+              <h3 className="text-3xl font-semibold tracking-[-0.025em] text-white">
                 {card.title}
               </h3>
               <p className="mt-4 max-w-xl text-base leading-7 text-white/66">

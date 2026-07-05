@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
+import { useEffect, useRef, useState, type TouchEvent } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ArrowCounterClockwise, CaretDown, CaretLeft, CaretRight, Plus } from "@phosphor-icons/react";
@@ -7,7 +7,6 @@ import {
   formatMoney,
   getStepAmounts,
   type LedgerState,
-  type NetResult,
   type Player,
 } from "../lib/ledger";
 
@@ -17,7 +16,6 @@ type RoundTableLedgerProps = {
   state: LedgerState;
   currentLeader: Player;
   largestSpread: number;
-  netResults: NetResult[];
   onApplyRecord: (
     opponentId: number,
     amount: number,
@@ -36,7 +34,6 @@ export function RoundTableLedger({
   state,
   currentLeader,
   largestSpread,
-  netResults,
   onApplyRecord,
   onUndoLast,
   onNextSession,
@@ -97,10 +94,6 @@ export function RoundTableLedger({
     direction === "win"
       ? `我赢 ${selectedOpponent?.name ?? "对手"}`
       : `我输给 ${selectedOpponent?.name ?? "对手"}`;
-
-  const opponentTotals = useMemo(() => {
-    return new Map(netResults.map((item) => [item.player.id, item.total]));
-  }, [netResults]);
 
   function cycleOpponent(step: number) {
     if (opponents.length === 0) {
@@ -189,7 +182,7 @@ export function RoundTableLedger({
                 onClick={() => setSelectedOpponentId(player.id)}
               >
                 <span className="table-node__name">{player.name}</span>
-                <span className="table-node__score">{formatMoney(opponentTotals.get(player.id) ?? 0)}</span>
+                <span className="table-node__score">{formatMoney(player.balance)}</span>
               </button>
             );
           })}

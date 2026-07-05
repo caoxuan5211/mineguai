@@ -46,8 +46,8 @@ export function FeatureGrid() {
     <section className="section-space">
       <div className="mx-auto max-w-[1500px] px-4 sm:px-6 lg:px-8">
         <div className="mb-12 max-w-3xl">
-          <p className="text-sm tracking-[0.2em] text-white/45">给牌桌的重写</p>
-          <h2 className="mt-4 text-4xl font-bold tracking-[-0.05em] text-white sm:text-5xl">
+          <p className="text-sm tracking-normal text-white/45">给牌桌的重写</p>
+          <h2 className="mt-4 text-4xl font-bold tracking-[-0.035em] text-white sm:text-5xl">
             不是把旧按钮放大，而是把整张牌桌重新编排。
           </h2>
         </div>
@@ -58,7 +58,7 @@ export function FeatureGrid() {
                 <Icon size={22} weight="duotone" />
               </div>
               <div className="space-y-4">
-                <h3 className="text-2xl font-semibold tracking-[-0.04em] text-white">
+                <h3 className="text-2xl font-semibold tracking-[-0.025em] text-white">
                   {title}
                 </h3>
                 <p className="max-w-[34rem] text-base leading-7 text-white/68">{copy}</p>
