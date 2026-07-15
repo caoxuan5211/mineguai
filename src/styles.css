@@ -82,6 +82,18 @@ input {
   gap: 16px;
 }
 
+.app-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tool-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 /* ===== Top Bar ===== */
 .topbar {
   display: flex;
@@ -474,6 +486,17 @@ input {
   border-radius: var(--radius);
   background: var(--bg-card);
   border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.history__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .history__header {
@@ -500,11 +523,6 @@ input {
   padding: 20px 0;
 }
 
-.history__list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
 
 .history-item {
   display: flex;
@@ -561,14 +579,103 @@ input {
   }
 }
 
+/* ===== Desktop layout ===== */
 @media (min-width: 768px) {
   .app {
-    padding: 0 0 40px;
+    max-width: 960px;
+    padding: 0 24px 40px;
   }
+
+  .app-body {
+    flex-direction: row;
+    gap: 24px;
+    align-items: flex-start;
+  }
+
+  .tool-panel {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .history {
+    width: 340px;
+    flex-shrink: 0;
+    max-height: calc(100dvh - 120px);
+    position: sticky;
+    top: 80px;
+  }
+
+  .history__list {
+    max-height: calc(100dvh - 260px);
+  }
+
   .scoreboard {
     grid-template-columns: repeat(4, 1fr);
   }
+
   .score-card--me {
     grid-column: auto;
+  }
+
+  .topbar {
+    padding: 20px 0 12px;
+  }
+
+  .topbar__logo {
+    font-size: 22px;
+  }
+
+  .amt-btn {
+    padding: 22px 4px;
+    font-size: 24px;
+  }
+
+  .amt-btn:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-strong);
+  }
+
+  .amt-btn--win:hover {
+    background: var(--win-soft);
+    border-color: var(--win);
+    color: var(--win);
+  }
+
+  .amt-btn--lose:hover {
+    background: var(--lose-soft);
+    border-color: var(--lose);
+    color: var(--lose);
+  }
+
+  .dir-btn {
+    padding: 20px;
+    font-size: 18px;
+  }
+
+  .opp-btn {
+    padding: 18px 12px;
+  }
+
+  .opp-btn__name {
+    font-size: 18px;
+  }
+
+  .score-card__balance {
+    font-size: 32px;
+  }
+
+  .score-card--me .score-card__balance {
+    font-size: 40px;
+  }
+}
+
+/* ===== Large desktop ===== */
+@media (min-width: 1100px) {
+  .app {
+    max-width: 1060px;
+  }
+
+  .history {
+    width: 380px;
   }
 }

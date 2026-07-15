@@ -81,7 +81,6 @@ export default function App() {
 
   return (
     <div className="app" ref={swipeRef}>
-      {/* ===== 顶部栏 ===== */}
       <header className="topbar">
         <div className="topbar__brand">
           <span className="topbar__logo">Mineguai</span>
@@ -103,7 +102,6 @@ export default function App() {
         </div>
       </header>
 
-      {/* ===== 步长调节 ===== */}
       {showStep && (
         <div className="drawer">
           <div className="drawer__row">
@@ -120,7 +118,6 @@ export default function App() {
         </div>
       )}
 
-      {/* ===== 改名面板 ===== */}
       {editing && (
         <div className="drawer">
           <div className="drawer__grid">
@@ -139,100 +136,97 @@ export default function App() {
         </div>
       )}
 
-      {/* ===== 记分牌 ===== */}
-      <section className="scoreboard">
-        {state.players.map(p => (
-          <div key={p.id} className={`score-card ${p.id === 0 ? "score-card--me" : ""} ${p.balance > 0 ? "score-card--up" : p.balance < 0 ? "score-card--down" : ""}`}>
-            <span className="score-card__name">{p.name}</span>
-            <span className="score-card__balance">{formatMoney(p.balance)}</span>
-          </div>
-        ))}
-      </section>
+      <div className="app-body">
+        <div className="tool-panel">
+          <section className="scoreboard">
+            {state.players.map(p => (
+              <div key={p.id} className={`score-card ${p.id === 0 ? "score-card--me" : ""} ${p.balance > 0 ? "score-card--up" : p.balance < 0 ? "score-card--down" : ""}`}>
+                <span className="score-card__name">{p.name}</span>
+                <span className="score-card__balance">{formatMoney(p.balance)}</span>
+              </div>
+            ))}
+          </section>
 
-      {/* ===== 对手选择 ===== */}
-      <section className="opponent-bar">
-        <span className="label">选择对手</span>
-        <div className="opponent-row">
-          {opponents.map(p => (
+          <section className="opponent-bar">
+            <span className="label">选择对手</span>
+            <div className="opponent-row">
+              {opponents.map(p => (
+                <button
+                  key={p.id}
+                  className={`opp-btn ${opponent === p.id ? "opp-btn--active" : ""}`}
+                  onClick={() => setOpponent(p.id)}
+                >
+                  <span className="opp-btn__name">{p.name}</span>
+                  <span className="opp-btn__bal">{formatMoney(p.balance)}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section className="dir-bar">
             <button
-              key={p.id}
-              className={`opp-btn ${opponent === p.id ? "opp-btn--active" : ""}`}
-              onClick={() => setOpponent(p.id)}
+              className={`dir-btn dir-btn--win ${direction === "win" ? "dir-btn--active" : ""}`}
+              onClick={() => setDirection("win")}
             >
-              <span className="opp-btn__name">{p.name}</span>
-              <span className="opp-btn__bal">{formatMoney(p.balance)}</span>
+              我赢 {opp?.name}
             </button>
-          ))}
+            <button
+              className={`dir-btn dir-btn--lose ${direction === "lose" ? "dir-btn--active" : ""}`}
+              onClick={() => setDirection("lose")}
+            >
+              我输 {opp?.name}
+            </button>
+          </section>
+
+          <section className="amount-bar">
+            {amounts.map(a => (
+              <button
+                key={a}
+                className={`amt-btn ${direction === "win" ? "amt-btn--win" : "amt-btn--lose"}`}
+                onClick={() => commit(a)}
+              >
+                <span className="amt-btn__sign">{direction === "win" ? "+" : "−"}</span>
+                {a}
+              </button>
+            ))}
+          </section>
+
+          <section className="action-bar">
+            <button className="btn-action" onClick={handleUndo} disabled={!hasRecords}>
+              撤销
+            </button>
+            <button className="btn-action btn-action--primary" onClick={handleNext}>
+              新一局
+            </button>
+          </section>
         </div>
-      </section>
 
-      {/* ===== 方向切换 ===== */}
-      <section className="dir-bar">
-        <button
-          className={`dir-btn dir-btn--win ${direction === "win" ? "dir-btn--active" : ""}`}
-          onClick={() => setDirection("win")}
-        >
-          我赢 {opp?.name}
-        </button>
-        <button
-          className={`dir-btn dir-btn--lose ${direction === "lose" ? "dir-btn--active" : ""}`}
-          onClick={() => setDirection("lose")}
-        >
-          我输 {opp?.name}
-        </button>
-      </section>
-
-      {/* ===== 金额按钮 ===== */}
-      <section className="amount-bar">
-        {amounts.map(a => (
-          <button
-            key={a}
-            className={`amt-btn ${direction === "win" ? "amt-btn--win" : "amt-btn--lose"}`}
-            onClick={() => commit(a)}
-          >
-            <span className="amt-btn__sign">{direction === "win" ? "+" : "−"}</span>
-            {a}
-          </button>
-        ))}
-      </section>
-
-      {/* ===== 操作栏 ===== */}
-      <section className="action-bar">
-        <button className="btn-action" onClick={handleUndo} disabled={!hasRecords}>
-          撤销
-        </button>
-        <button className="btn-action btn-action--primary" onClick={handleNext}>
-          新一局
-        </button>
-      </section>
-
-      {/* ===== 历史记录 ===== */}
-      <section className="history">
-        <div className="history__header">
-          <span className="label">最近记录</span>
-          <span className="history__count">{state.records.length} 笔</span>
-        </div>
-        {state.records.length === 0 ? (
-          <p className="history__empty">还没有记录，上方选择对手和金额开始记账。</p>
-        ) : (
-          <div className="history__list">
-            {[...state.records].reverse().slice(0, 20).map(r => {
-              const name = state.players.find(p => p.id === r.opponentId)?.name ?? "?";
-              const time = new Date(r.createdAt).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
-              return (
-                <div key={r.id} className={`history-item ${r.direction === "win" ? "history-item--win" : "history-item--lose"}`}>
-                  <span className="history-item__desc">
-                    我{r.direction === "win" ? "赢了" : "输给"}{name} {r.amount}
-                  </span>
-                  <span className="history-item__time">{time}</span>
-                </div>
-              );
-            })}
+        <section className="history">
+          <div className="history__header">
+            <span className="label">最近记录</span>
+            <span className="history__count">{state.records.length} 笔</span>
           </div>
-        )}
-      </section>
+          {state.records.length === 0 ? (
+            <p className="history__empty">还没有记录，上方选择对手和金额开始记账。</p>
+          ) : (
+            <div className="history__list">
+              {[...state.records].reverse().slice(0, 20).map(r => {
+                const name = state.players.find(p => p.id === r.opponentId)?.name ?? "?";
+                const time = new Date(r.createdAt).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" });
+                return (
+                  <div key={r.id} className={`history-item ${r.direction === "win" ? "history-item--win" : "history-item--lose"}`}>
+                    <span className="history-item__desc">
+                      我{r.direction === "win" ? "赢了" : "输给"}{name} {r.amount}
+                    </span>
+                    <span className="history-item__time">{time}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
 
-      {/* ===== 底部 ===== */}
       <footer className="footer">
         <p>Mineguai · 数据仅保存在本地浏览器</p>
       </footer>
