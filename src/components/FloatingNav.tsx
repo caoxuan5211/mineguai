@@ -1,32 +1,33 @@
 const links = [
-  { href: "#score-arena", label: "开局" },
-  { href: "#session-replay", label: "战绩" },
-  { href: "#about", label: "关于" },
-  { href: "#privacy", label: "隐私" },
+  { href: "#features", label: "特性", tone: "jade" },
+  { href: "#score-arena", label: "开局", tone: "gold" },
+  { href: "#session-replay", label: "战绩", tone: "mist" },
+  { href: "#privacy", label: "隐私", tone: "ember" },
 ];
 
 export function FloatingNav() {
   return (
     <header className="sticky top-4 z-50 px-4 sm:px-6 lg:px-8">
-      <nav className="mx-auto flex max-w-[1500px] items-center justify-between rounded-full border border-white/12 bg-black/35 px-4 py-3 shadow-[0_24px_90px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+      <nav className="floating-nav mx-auto flex max-w-[1500px] items-center justify-between rounded-full px-4 py-3">
         <a
           href="#hero"
-          className="text-sm font-semibold tracking-normal text-white/88 transition hover:text-[var(--accent-strong)]"
+          className="nav-brand text-sm font-semibold tracking-normal transition"
+          aria-label="回到 Mineguai 首屏"
         >
           Mineguai
         </a>
-        <div className="hidden items-center gap-6 md:flex">
+        <div className="nav-links hidden items-center gap-3 md:flex">
           {links.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm text-white/72 transition hover:text-white"
+              className={`nav-link nav-link--${link.tone} text-sm transition`}
             >
               {link.label}
             </a>
           ))}
         </div>
-        <a href="#score-arena" className="soft-button soft-button--light">
+        <a href="#score-arena" className="nav-mobile-action soft-button soft-button--light">
           立即开局
         </a>
       </nav>

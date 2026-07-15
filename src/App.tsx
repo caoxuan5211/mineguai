@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { FloatingNav } from "./components/FloatingNav";
 import { HeroSection } from "./components/HeroSection";
 import { FeatureGrid } from "./components/FeatureGrid";
@@ -6,6 +6,7 @@ import { PinnedStory } from "./components/PinnedStory";
 import { RoundTableLedger } from "./components/RoundTableLedger";
 import { HistorySheet } from "./components/HistorySheet";
 import { FinalCta } from "./components/FinalCta";
+import { ThemeSwitcher } from "./components/ThemeSwitcher";
 import { useLedger } from "./hooks/useLedger";
 
 function useTapSound() {
@@ -52,6 +53,11 @@ export default function App() {
   const ledger = useLedger();
   const playTap = useTapSound();
 
+  // Apply theme to document element
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", ledger.state.session.theme);
+  }, [ledger.state.session.theme]);
+
   function handlePointerDown(event: React.PointerEvent<HTMLElement>) {
     const target = event.target as HTMLElement;
     const interactive = target.closest("button, a");
@@ -73,6 +79,13 @@ export default function App() {
     playTap("soft");
   }
 
+  function handleResetAll() {
+    if (window.confirm("确定清空所有数据？包括玩家称呼、余额和历史记录，操作不可恢复。")) {
+      ledger.resetAllData();
+      playTap("reset");
+    }
+  }
+
   return (
     <main className="site-shell" onPointerDown={handlePointerDown}>
       <a href="#score-arena" className="skip-link">
@@ -89,6 +102,12 @@ export default function App() {
           <p>
             手机端优先的圆桌记分台。当前目标、金额、撤销和开新局都固定在同一条操作路径里。
           </p>
+        </div>
+        <div className="tool-toolbar">
+          <ThemeSwitcher currentTheme={ledger.state.session.theme} onChange={ledger.setTheme} />
+          <button type="button" className="reset-all-button" onClick={handleResetAll}>
+            清空数据
+          </button>
         </div>
         <RoundTableLedger
           state={ledger.state}

@@ -57,9 +57,14 @@ export function HistorySheet({
       <div className="history-sheet__intro">
         <div>
           <p className="round-shell__label">history rail</p>
-          <h2 className="history-sheet__title">把最近几笔留在手边，但不抢主舞台。</h2>
+          <h2 className="history-sheet__title">最近几笔留在手边，随时能撤回。</h2>
         </div>
-        <button type="button" className="history-sheet__close" onClick={onEndSession}>
+        <button
+          type="button"
+          className="history-sheet__close"
+          onClick={onEndSession}
+          disabled={state.records.filter((record) => !record.reverted).length === 0}
+        >
           结束本局
         </button>
       </div>
@@ -85,7 +90,7 @@ export function HistorySheet({
       <div className="history-list">
         {records.length === 0 ? (
           <div className="history-empty">
-            <p>还没有记录。现在点一次圆桌上的对手，再点底部金额，这里就会开始滚动累积。</p>
+            <p>还没有记录。点一次圆桌上的对手，再点底部金额，这里会开始累积。</p>
           </div>
         ) : (
           records.map((record) => (

@@ -280,8 +280,18 @@ export function setStepValue(state: LedgerState, value: number) {
   };
 }
 
-export function setDealer(state: LedgerState, _playerId: number) {
-  return state;
+export function setDealer(state: LedgerState, playerId: number) {
+  return {
+    ...state,
+    players: state.players.map((player) => ({
+      ...player,
+      isDealer: player.id === playerId,
+    })),
+  };
+}
+
+export function resetAllData() {
+  return createInitialState();
 }
 
 export function setTheme(state: LedgerState, _theme: ThemeId) {

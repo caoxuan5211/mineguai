@@ -5,11 +5,11 @@ export function FinalCta() {
         <div className="final-cta">
           <div className="space-y-6">
             <p className="text-sm tracking-normal text-white/45">继续往前</p>
-            <h2 className="max-w-4xl text-4xl font-bold tracking-[-0.035em] text-white sm:text-6xl">
-              继续下一局，或者把这一局留在页面里慢慢回看。
+            <h2 className="max-w-4xl text-4xl font-bold tracking-normal text-white sm:text-6xl">
+              继续下一局，或者把这一局留在页面里回看。
             </h2>
             <p className="max-w-2xl text-lg leading-8 text-white/66">
-              Mahjong Ledger 现在是一块真正可用的桌边记分台，也是一张带有强烈气味的作品首页。你不需要在可用性和冲击力之间二选一。
+              Mineguai 是一块可直接上桌的记分台：不注册、不联网、不改变你们熟人局的算法，只把输赢记清楚。
             </p>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row">
@@ -24,9 +24,9 @@ export function FinalCta() {
 
         <footer className="mt-8 grid gap-5 rounded-2xl border border-white/10 bg-white/4 px-6 py-8 text-sm text-white/58 lg:grid-cols-3">
           <div>
-            <strong className="block text-white">Mahjong Ledger</strong>
+            <strong className="block text-white">Mineguai</strong>
             <p className="mt-2">
-              一个为桌边快记分而生，同时保留展览级视觉叙事的本地前端项目。
+              一个为四人麻将熟人局而生的本地前端记账器。
             </p>
           </div>
           <div id="privacy">
@@ -36,7 +36,7 @@ export function FinalCta() {
           <div id="terms">
             <strong className="block text-white">Terms</strong>
             <p className="mt-2">
-              这是一个本地工具与作品展示页面，不提供联网规则裁定或账号服务。
+              这是一个本地工具页面，不提供联网规则裁定或账号服务。
             </p>
           </div>
         </footer>

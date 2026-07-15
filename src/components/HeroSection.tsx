@@ -33,25 +33,25 @@ export function HeroSection() {
     >
       <div data-hero-glow className="hero-glow absolute inset-x-0 top-0 h-[62rem]" />
       <div className="relative z-10 mx-auto flex min-h-[88dvh] max-w-[1500px] flex-col items-center justify-center px-4 text-center sm:px-6 lg:px-8">
-        <p className="mb-8 text-sm tracking-normal text-white/55">
-          东方暗奢记分器 / LOCAL-FIRST SCORE ARENA
+        <p className="mb-8 text-sm tracking-normal text-white/55 hero-kicker">
+          local-first mahjong ledger
         </p>
         <h1
           data-hero-title
-          className="hero-title mx-auto max-w-6xl text-[clamp(3.2rem,8vw,6rem)] font-black leading-[0.94] tracking-[-0.035em] text-balance text-white"
+          className="hero-title mx-auto max-w-6xl text-5xl font-black leading-[0.96] tracking-normal text-balance text-white sm:text-7xl lg:text-8xl"
         >
-          <span>把一桌输赢</span>
+          <span>手机边记账</span>
           <span>
-            记成
+            两步
             <span className="hero-inline-pill" aria-hidden="true" />
-            一场仪式
+            不断牌局
           </span>
         </h1>
         <p
           data-hero-copy
           className="mt-8 max-w-3xl text-lg leading-8 text-white/72 sm:text-xl"
         >
-          Mahjong Ledger 不是给麻将加一层廉价皮肤，而是把桌边快记分、回合时间线和作品级叙事压进同一张页面里。
+          Mineguai 把四人麻将的对象选择、输赢金额、撤销和回看放进同一条桌边路径。数据留在本机，打开网页就能继续上一局。
         </p>
         <div
           data-hero-actions

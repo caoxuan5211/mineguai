@@ -2,7 +2,7 @@
   "name": "mineguai",
   "private": true,
   "version": "0.1.0",
-  "description": "Premium mahjong ledger website with a mobile-first scoring arena.",
+  "description": "Local-first mobile mahjong ledger for four-player games.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

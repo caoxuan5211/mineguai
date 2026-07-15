@@ -90,6 +90,7 @@ export function RoundTableLedger({
 
   const selectedOpponent = opponents.find((player) => player.id === selectedOpponentId) ?? opponents[0];
   const amounts = getStepAmounts(state.session.stepValue);
+  const hasActiveRecords = state.records.some((record) => !record.reverted);
   const railTitle =
     direction === "win"
       ? `我赢 ${selectedOpponent?.name ?? "对手"}`
@@ -180,6 +181,8 @@ export function RoundTableLedger({
                 type="button"
                 className={`table-node table-node--${position} ${isActive ? "table-node--active" : ""}`}
                 onClick={() => setSelectedOpponentId(player.id)}
+                aria-pressed={isActive}
+                aria-label={`选择${player.name}，当前余额${formatMoney(player.balance)}`}
               >
                 <span className="table-node__name">{player.name}</span>
                 <span className="table-node__score">{formatMoney(player.balance)}</span>
@@ -200,7 +203,13 @@ export function RoundTableLedger({
               <strong className="ledger-rail__title">{railTitle}</strong>
             </div>
             <div className="ledger-rail__actions">
-              <button type="button" className="icon-button" onClick={onUndoLast} aria-label="撤销上一笔">
+              <button
+                type="button"
+                className="icon-button"
+                onClick={onUndoLast}
+                aria-label="撤销上一笔"
+                disabled={!hasActiveRecords}
+              >
                 <ArrowCounterClockwise size={18} weight="bold" />
               </button>
               <button type="button" className="icon-button icon-button--accent" onClick={onNextSession} aria-label="开新一局">
@@ -233,6 +242,7 @@ export function RoundTableLedger({
                 type="button"
                 className={`amount-strip__button ${direction === "win" ? "amount-strip__button--win" : "amount-strip__button--lose"}`}
                 onClick={() => commitAmount(amount)}
+                aria-label={`${direction === "win" ? "记录我赢" : "记录我输"} ${selectedOpponent?.name ?? "对手"} ${formatAmount(amount)}`}
               >
                 <span>{direction === "win" ? "+" : "-"}</span>
                 <strong>{formatAmount(amount)}</strong>

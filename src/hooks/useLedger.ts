@@ -8,6 +8,8 @@ import {
   getNetResultByPlayer,
   setPlayerNames,
   setStepValue,
+  setTheme,
+  resetAllData,
   startNextSession,
   undoLastRecord,
   undoRecordById,
@@ -40,5 +42,7 @@ export function useLedger() {
     nextSession: () => setState((current) => startNextSession(current)),
     setPlayerNames: (names: string[]) => setState((current) => setPlayerNames(current, names)),
     setStepValue: (value: number) => setState((current) => setStepValue(current, value)),
+    setTheme: (theme: "jade" | "ink" | "brass") => setState((current) => setTheme(current, theme)),
+    resetAllData: () => setState(() => resetAllData()),
   };
 }
